@@ -1,0 +1,99 @@
+React: Read Operation
+
+- our goal is to read student list from db
+
+- if we hit https://localhost:5000/api/students
+  via a 'get request' (just like sending a follow
+  request in facebook or instagram) we will fetch
+  document rows from db through express backend
+
+- if we want to print the JSON document rows from
+  mongodb into some html element like an unordered list
+  first we need to store it in some useState variable
+  in react first
+
+- let that variable be named students initialised to
+  type [] and let setStudents be a function used to 
+  assign data to that variable called students
+
+- we will then use fetch api to make the get request
+  and a response will be received containing data from
+  db through backend wich we will store in useState
+  variable named students using the function
+  setStudents which is a useState function
+
+- then all we need to do is read each individual row
+  from students array using map function that works
+  similar to php foreach loop
+
+- s is the the alias given to current iteration row
+
+- s.name, s.age, s.email will give each column data of
+  current row from iteration
+
+- useEffect is used to perform this entire student list
+  printing operation once at the beginning of page load
+
+
+React: Delete Operation
+
+- when we generate a html list item element to print
+  current student row data using students variable
+  (the useState variable of type=list, using alias s)
+  and map function (acting like a foreach loop) we
+  can also generate a html button element inside
+  the list item element during that iteration
+- we can then pass current iteration student id to
+  that button while it is being printed
+
+- we can then use onclick event to track when we click
+  that button to pass the id of the student row whose
+  delete button u clicked and run a function that will
+  hit https://localhost:5000/api/students/<id> at the
+  backend using a DELETE request and delete record
+  in db with matching id
+
+React: Insertion Operation
+
+- For inserting data to db we need to create a form
+  element in html
+- we can define it in the return part of our App.js
+- then all we need to do is hit the url
+  https://localhost:5000/api/students with a POST type
+  request
+- Just before making the POST request we need to store
+  the current form data from frontend using the useState
+  variable called form and simply passing that form
+  variable to the POST request in JSON format
+- setForm is a useState function that will update the
+  values being typed to every input element inside
+  the form
+- we will trigger setForm function to update the values
+  of form variable during the event when a user types
+  something to any input element in the form
+- this is done by binding the onchange event handler to
+  every input element in the form
+
+React: Updation Operation
+- Just like in deletion operation we pass the entire 
+  student row instead of id (using the s alias) whose
+  edit button was clicked to a function named
+  handleEdit function
+- handleEdit function using the received s alias
+  containing the entire student row uses it show
+  current name, email, age values of the student we
+  are about to edit inside the input elements of the
+  form
+- we also store the id of the student we are editing
+  in a useState variable called Editing Id
+- when we click the submit button, it will first check
+  for the existence of an Editing Id, if present
+  then it will hit https://localhost:5000/api/students
+  with a PUT request instead of the normal POST request
+- since the type of request made was PUT, it updates
+  the record matching the editing Id and then resets
+  editing Id back to null
+- if editing Id wasn't present it means we never
+  clicked any edit button and clicked the submit button
+- so it will make POST request to insert a record
+  instead
