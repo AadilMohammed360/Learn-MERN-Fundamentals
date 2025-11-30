@@ -1,24 +1,31 @@
 / / / !!! TOPICS Teachers must cover to SEM 1 students before brining them to MERN lab seminar/ workshop !!! / / /
 =====================================================================================================================
 
+- what are package managers, a basic awareness of python's pip commands (so seminar can cover how it correlates to npm)
+
 - representing table design in computer languages comparing representation in array of objects in javascript
- ,JSON in mongodb compass and php associative array for mysql
-- how sql db. table and rows and columns correlate with mongo db, collections and documents and fields
+  and php associative array for mysql (so seminar can cover JSON in mongoose and mongodb
+  how sql db. table and rows and columns correlate with mongo db, collections and documents and fields )
 - function and its parameter
 - return statement
+
 - difference b/w normal function definition and its arrow function representation including parameter passing
-- php table description (table design : sql table desc command), what is table schema and how it relates
-  to mongoose
+- php table description (table design : sql table desc command), what is table schema ( so seminar can cover how it relates
+  to mongodb )
 - client server architecture and basic html request/ response core idea
 - difference between normal form submission using normal xhttp get and post and replacing
- it with json submission after preventing default
-- what is get, post, put and delete transmission methods in a form element
+ it with json submission after preventing default (so seminar can cover 
+ what is get, post, put and delete transmission methods in a form element)
 
 
 - summary of virtual DOM
 - DOM -> each element can be uniquely identified using an id core idea
-- useState and useEffect
+
 - javascript map and how it correlates to foreach loop in php
 - javascript events like mouseclick, keypress, onchange events
 - what is an event handler and how it can be binded to a form input element
 
+
+
+for me:
+- useState and useEffect
