@@ -382,26 +382,6 @@ In **Step 0 (Schema definition)**, should define the **structure of documents** 
 
 ---
 
-### 🔑 How database & collection are specified in Mongoose
-1. **Database name**  
-   - Comes from the connection string you use when connecting:  
-     ```js
-     await mongoose.connect('mongodb://localhost:27017/learnMERN');
-     ```
-   - Here, `learnMERN` is the database name.  
-   - If the database doesn’t exist yet, MongoDB will create it automatically when you insert the first document.
-
-2. **Collection name**  
-   - Comes from the **model name** you pass to `mongoose.model()`.  
-   - Example:
-     ```js
-     const Student = mongoose.model('Student', studentSchema);
-     ```
-   - Mongoose automatically pluralizes the model name → `Student` becomes `students`.  
-   - So documents will be stored in the `students` collection inside the `learnMERN` database.
-
----
-
 ###  Step 0: Connect to your database + specify collection structure
 ```js
 import mongoose from 'mongoose';
@@ -430,11 +410,25 @@ export default Student;
 
 ---
 
-## 📝 Points to Note
-- In **Chapter 4**, explain that MongoDB itself doesn’t enforce schemas — you can insert any shape of JSON.  
-- In **Chapter 5**, introduce Mongoose as a way to enforce structure in Node.js code.  
-- Show students how Compass allows “free‑form” inserts, but Mongoose requires schema compliance. This contrast helps them understand why schemas matter in real projects.
+### 🔑 How database & collection are specified in Mongoose
+1. **Database name**  
+   - Comes from the connection string you use when connecting:  
+     ```js
+     await mongoose.connect('mongodb://localhost:27017/learnMERN');
+     ```
+   - Here, `learnMERN` is the database name.  
+   - If the database doesn’t exist yet, MongoDB will create it automatically when you insert the first document.
 
+2. **Collection name**  
+   - Comes from the **model name** you pass to `mongoose.model()`.  
+   - Example:
+     ```js
+     const Student = mongoose.model('Student', studentSchema);
+     ```
+   - Mongoose automatically pluralizes the model name → `Student` becomes `students`.  
+   - So documents will be stored in the `students` collection inside the `learnMERN` database.
+
+---
 
 #### Step 1: List students (Read)
 - Add a GET route in `server.js`:
