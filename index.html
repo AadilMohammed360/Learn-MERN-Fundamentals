@@ -29,6 +29,7 @@
 - [Chapter 3](#chapter-3)
 - [Chapter 4](#chapter-4)
 - [Chapter 5](#chapter-5)
+- [Chapter 6](#chapter-6)
 
 ---
 
@@ -368,7 +369,7 @@ That’s all you need to get the project running again after the initial setup.
 ---
 
 ## Chapter 5  
-### CRUD Operations via `server.js`
+### CRUD Operations at Express backend via `server.js`
 
 **Goal:** Students perform CRUD operations programmatically using Express + Mongoose, verifying changes in Compass after each step.
 
@@ -479,7 +480,27 @@ export default Student;
 
 ---
 
-#### Step 3: Update record (Update)
+#### Step 3: Delete record (Delete)
+- Add a DELETE route:
+  ```js
+  app.delete('/api/students/:id', async (req, res) => {
+    try {
+      await Student.findByIdAndDelete(req.params.id);
+      res.json("Record Deleted");
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+  ```
+- **Test:** Open new cmd window and run the following:
+   ```c
+   curl -X DELETE http://localhost:8000/api/students/692850edf9d3c59a5694b299
+   ```  
+- **Verify:** Document disappears from Compass.
+
+---
+
+#### Step 4: Update record (Update)
 - Add a PUT route:
   ```js
   app.put('/api/students/:id', async (req, res) => {
@@ -505,25 +526,6 @@ export default Student;
 
 ---
 
-#### Step 4: Delete record (Delete)
-- Add a DELETE route:
-  ```js
-  app.delete('/api/students/:id', async (req, res) => {
-    try {
-      await Student.findByIdAndDelete(req.params.id);
-      res.json("Record Deleted");
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  });
-  ```
-- **Test:** Open new cmd window and run the following:
-   ```c
-   curl -X DELETE http://localhost:8000/api/students/692850edf9d3c59a5694b299
-   ```  
-- **Verify:** Document disappears from Compass.
-
----
 
 ✅ **Checkpoint:** After Chapter 4, students can manipulate MongoDB data both via Compass GUI and programmatically through Express/Mongoose.
 
