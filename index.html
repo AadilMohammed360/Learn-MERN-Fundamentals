@@ -920,19 +920,20 @@ export default App;
     const source = document.getElementById('md-source').textContent;
 
     // 2) Initialize markdown-it with highlight and anchor
-    const md = window.markdownit({
-      linkify: false,
-      highlight: function (str, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-          try { return hljs.highlight(str, { language: lang }).value; } catch (__) {}
-        }
-        return '';
-      }
-    }).use(window.markdownItAnchor, {
-      level: [1,2,3,4,5,6],
-      slugify: s => s.trim().toLowerCase().replace(/[^\w]+/g, '-'),
-      permalink: false
-    });
+const md = window.markdownit({
+  html: true,
+  linkify: false,
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try { return hljs.highlight(str, { language: lang }).value; } catch (__) {}
+    }
+    return '';
+  }
+}).use(window.markdownItAnchor, {
+  level: [1,2,3,4,5,6],
+  slugify: s => s.trim().toLowerCase().replace(/[^\w]+/g, '-'),
+  permalink: false
+});
 
     // 3) Render
     document.getElementById('content').innerHTML = md.render(source);
