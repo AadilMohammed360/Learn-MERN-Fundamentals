@@ -971,6 +971,30 @@ const md = window.markdownit({
     // Insert button before the <pre>
     pre.parentNode.insertBefore(btn, pre);
   });
+// Build stacked menu links from headings
+const headings = document.querySelectorAll('#content h2');
+const menuLinks = document.getElementById('menu-links');
+menuLinks.innerHTML = '';
+headings.forEach(h => {
+  const link = document.createElement('a');
+  link.href = '#' + h.id;
+  link.textContent = h.textContent;
+  menuLinks.appendChild(link);
+});
+
+// Toggle menu open/close
+const toggleBtn = document.getElementById('menu-toggle');
+toggleBtn.addEventListener('click', () => {
+  menuLinks.style.display = (menuLinks.style.display === 'flex') ? 'none' : 'flex';
+});
+
+// Collapse menu when a link is clicked
+menuLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuLinks.style.display = 'none';
+  });
+});
+    
 </script>
 
 </body>
