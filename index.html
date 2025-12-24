@@ -5,103 +5,910 @@
   <title>Learn MERN</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.css">
   <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      background: #f5f5f5; 
-      margin: 0; 
-      padding-top: 60px; /* leave space for sticky menu */
-      line-height: 1.6; 
-    }
-
-    /* Sticky top menu */
-    #topmenu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #333;
-      color: #fff;
-      z-index: 1000;
-    }
-
-    #menu-toggle {
-      background: #444;
-      color: #fff;
-      border: none;
-      width: 100%;
-      padding: 0.75rem;
-      text-align: left;
-      cursor: pointer;
-      font-size: 1em;
-    }
-
-    #menu-links {
-      display: none; /* hidden until toggled */
-      flex-direction: column;
-      background: #222;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    #menu-links a {
-      color: #fff;
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid #444;
-    }
-
-    #menu-links a:hover {
-      background: #444;
-    }
-
-    #content { 
-      max-width: 900px; 
-      margin: auto; 
-      background: #fff; 
-      padding: 2rem; 
-      border-radius: 8px; 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-    }
-
-    pre { 
-      padding: 1rem; 
-      padding-top: 2.5rem;
-      border-radius: 6px; 
-      overflow-x: auto; 
-      margin: 1rem 0; 
-      background-color: #282c34 !important;
-      color: #abb2bf;
-      position: relative;
-    }
-
-    .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 5px 12px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: background 0.3s;
-      z-index: 10;
-    }
-
-    .copy-btn:hover {
-      background: #45a049;
-    }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 2rem; line-height: 1.6; }
+    #content { max-width: 900px; margin: auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    pre { padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; background-color: #2d2d2d; color: #f8f8f2; }
+    code { font-family: Consolas, Monaco, monospace; font-size: 0.95em; }
+    #controls { max-width: 900px; margin: 1rem auto; display: flex; align-items: center; gap: 1rem; }
+    #controls label { font-weight: bold; }
   </style>
 </head>
 <body>
-  <!-- Sticky togglable menu -->
-  <div id="topmenu">
-    <button id="menu-toggle">☰ Navigation</button>
-    <div id="menu-links"></div>
+  <div id="controls">
+    <label for="colorPicker">Code block background:</label>
+    <input type="color" id="colorPicker" value="#2d2d2d">
   </div>
 
-  <div id="content">Loading...</div>
+  <div id="content"></div>
+
+  <!-- Inline markdown (no escaping needed) -->
+  <script type="text/markdown" id="md-source">
+## Index
+- [Chapter 1](#chapter-1)
+- [Chapter 2](#chapter-2)
+- [Chapter 3](#chapter-3)
+- [Chapter 4](#chapter-4)
+- [Chapter 5](#chapter-5)
+- [Chapter 6](#chapter-6)
+
+<a href="https://onedrive.live.com/personal/045dd550e4545f55/_layouts/15/Doc.aspx?sourcedoc=%7BDF20E588-1476-44AF-9E38-CE5BF2A49911%7D&file=Finalised.pptx&action=edit&mobileredirect=true" target="_blank" rel="noopener noreferrer">Open Presentation in new tab</a>
+
+
+---
+
+## Chapter 1
+
+### Windows beginner setup for MERN in Command Prompt
+
+You’ll guide students through creating the project folder on a specific drive, opening Command Prompt from that location, and running a single chained command to create subfolders and install all dependencies. This uses only Windows Command Prompt.
+
+---
+
+### Prerequisites
+
+- **Install Node.js (LTS):** From nodejs.org, then verify in Command Prompt:
+  ```
+  node -v
+  npm -v
+  ```
+- **Install MongoDB Community Server + Compass:** Default settings are fine. Make sure MongoDB service is running (it usually starts automatically).
+
+---
+
+### Create the main project folder on your drive
+
+1. **Open File Explorer to your drive:**
+   - **Action:** Click the drive you want (example: Z:).
+2. **Create the project folder:**
+   - **Action:** Right‑click → New → Folder → name it `TeachMERN`.
+3. **Open the folder:**
+   - **Action:** Double‑click `TeachMERN` to enter `Z:\TeachMERN`.
+
+---
+
+### Open Command Prompt at that exact location
+
+1. **Launch CMD from the address bar:**
+   - **Action:** Click the File Explorer address bar, type `cmd`, press Enter.
+   - **Result:** Command Prompt opens with the path set to `Z:\TeachMERN>`.
+
+---
+
+### One-liner to create subfolders and install packages
+
+Run this single command inside `Z:\TeachMERN`:
+
+```cmd
+mkdir backend frontend & npm init -y --prefix backend & npm install express mongoose cors dotenv nodemon --prefix backend & del package.json & del package-lock.json & npm pkg set main=server.js --prefix backend & npm pkg set scripts.dev="nodemon server.js" --prefix backend & npm pkg set scripts.start="node server.js" --prefix backend & >backend\server.js echo import express from 'express'; & echo import cors from 'cors'; >>backend\server.js & echo import dotenv from 'dotenv'; >>backend\server.js & echo. >>backend\server.js & echo dotenv.config(); // Load environment variables >>backend\server.js & echo. >>backend\server.js & echo const app = express(); >>backend\server.js & echo const port = process.env.PORT ^|^| 8000; // Default port >>backend\server.js & echo. >>backend\server.js & echo app.use(cors()); // Enable CORS >>backend\server.js & echo app.use(express.json()); // Parse JSON bodies >>backend\server.js & echo. >>backend\server.js & echo app.listen(port, () =^> { >>backend\server.js & echo     console.log("Server running on port: " + port); >>backend\server.js & echo }); >>backend\server.js & echo | npm create vite@latest frontend -- --template react & npm install --prefix frontend & npm install axios --prefix frontend & start cmd /k "npm run dev --prefix backend & cmd" & start http://localhost:5173/ & npm run dev --prefix frontend
+
+```
+
+You’re right — the **“What it does”** section in your draft only covers part of the one‑liner. Let’s expand it so students clearly understand every step that happens when they run that chained command.
+
+---
+
+## 🔎 What it does (expanded)
+
+- **`mkdir backend frontend`**  
+  Creates two subfolders inside `TeachMERN`: one for backend code and one for frontend code.
+
+- **`npm init -y --prefix backend`**  
+  Initializes a default `package.json` inside the `backend` folder.
+
+- **`npm install express mongoose cors dotenv nodemon --prefix backend`**  
+  Installs backend dependencies:  
+  - **express** → web server framework  
+  - **mongoose** → MongoDB object modeling  
+  - **cors** → Cross‑Origin Resource Sharing middleware  
+  - **dotenv** → loads environment variables from `.env`  
+  - **nodemon** → auto‑restarts server on file changes
+
+- **`del package.json & del package-lock.json`**  
+  Deletes any accidental root‑level `package.json` and `package-lock.json` so only the backend/frontend ones remain.
+
+- **`npm pkg set main=server.js --prefix backend`**  
+  Sets the backend entry point to `server.js`.
+
+- **`npm pkg set scripts.dev="nodemon server.js" --prefix backend`**  
+  Adds a `dev` script in backend’s `package.json` to run the server with nodemon.
+
+- **`npm pkg set scripts.start="node server.js" --prefix backend`**  
+  Adds a `start` script in backend’s `package.json` to run the server normally.
+
+- **`>backend\server.js`**  
+  Creates a `server.js` file inside `backend` with starter code:  
+  - Imports `express`, `cors`, `dotenv`  
+  - Configures environment variables  
+  - Sets up Express app with JSON parsing and CORS  
+  - Defines a port (`process.env.PORT || 8000`)  
+  - Starts the server and logs `"Server running on port: …"`
+
+- **`npm create vite@latest frontend -- --template react`**  
+  Bootstraps a new React app in the `frontend` folder using Vite.  
+
+- **`npm install --prefix frontend`**  
+  Installs all dependencies for the Vite React app.
+
+- **`start cmd /k "npm run dev --prefix backend & cmd"`**  
+  Opens a new Command Prompt window, runs the backend dev server (`nodemon server.js`), and keeps the window open for further commands.
+
+- **`start http://localhost:5173/`**  
+  Opens the default browser pointing to the Vite dev server URL.
+
+- **`npm run dev --prefix frontend`**  
+  Starts the frontend React app in the current CMD window.
+
+---
+
+## ✅ Quick checkpoints
+- **Folders created:** `backend` and `frontend` inside `TeachMERN`.  
+- **Backend ready:** `server.js` exists, backend `package.json` has scripts, dependencies installed.  
+- **Frontend ready:** Vite React app initialized, dependencies installed, Axios added.  
+- **Running servers:** Backend runs in its own CMD window, frontend runs in the current one, browser opens automatically.  
+
+---
+
+
+## Chapter 2
+
+### 🛠️ Common Node.js Installation Errors and Fixes (Windows)
+
+### 1. Error:  
+`npm: %programfiles%\nodejs\npm.ps1 cannot be loaded because running scripts is disabled in this system`
+
+**Cause:** Windows PowerShell blocks script execution by default.  
+
+**Fix (step‑by‑step):**
+1. Press **Win + R**, type `powershell`, and hit Enter.  
+2. In the PowerShell window, run:  
+   ```powershell
+   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ```  
+3. Type `Y` when asked for confirmation.  
+4. Close PowerShell and reopen Command Prompt.  
+5. Test with:  
+   ```cmd
+   npm -v
+   ```  
+   → You should see the npm version number.
+
+---
+
+### 2. Error:  
+`npm is not recognised as a command or cmdlet`
+
+**Cause:** The npm folder is missing or not properly linked in PATH.  
+
+**Fix (step‑by‑step):**
+1. Navigate to your Node.js installation folder (usually `C:\Program Files\nodejs`).  
+2. Check if there’s a folder named `npm`.  
+3. If missing:  
+   - Right‑click → New → Folder → name it `npm`.  
+   - Restart Command Prompt.  
+4. Verify npm works:  
+   ```cmd
+   npm -v
+   ```
+
+---
+
+### 3. Error:  
+`'node' is not recognised as an internal or external command, operable program or batch file`
+
+**Cause:** Windows environment variables were not set properly during installation. System protection policies sometimes prevent the installer from updating PATH to include Node.js and npm executables.
+
+**Fix (step‑by‑step):**
+1. Press **Win + R**, type `sysdm.cpl`, and hit Enter.  
+2. In the **System Properties** window, go to the **Advanced** tab → click **Environment Variables**.  
+3. Under **System variables**, find and select `Path` → click **Edit**.  
+4. Click **New** and add the following paths (adjust if Node.js is installed elsewhere):  
+   ```
+   C:\Program Files\nodejs\
+   C:\Users\<YourUsername>\AppData\Roaming\npm
+   ```  
+5. Click **OK** to save changes, then close all dialogs.  
+6. Restart Command Prompt.  
+7. Test with:  
+   ```cmd
+   node -v
+   npm -v
+   ```  
+   → Both should now return version numbers.
+
+---
+
+
+Do you want me to also prepare a **visual flowchart** for Chapter 2 (Error → Cause → Fix) so it’s easy to drop into your PowerPoint slides?
+
+### 🎯 Teaching tips for your slides
+- Use **red error screenshots** (CMD showing the error).  
+- Follow with **green success screenshots** (npm version showing after fix).  
+- Add a **checkpoint slide**: “If you see a version number, npm is working!”  
+- Include a **warning box**: “Always run CMD as normal user — no need for admin unless specified.”  
+
+---
+
+## Navigate to Chapters
+- [Chapter 1](#chapter-1)
+- [Chapter 2](#chapter-2)
+- [Chapter 3](#chapter-3)
+- [Chapter 4](#chapter-4)
+- [Chapter 5](#chapter-5)
+- [Chapter 6](#chapter-6)
+
+---
+
+## Chapter 3
+
+### How to run the project next time
+
+1. **Open your project folder in File Explorer**  
+   - Navigate to the main folder of your project `Z:\learnMERN` which contains the backend and frontend.
+
+2. **Launch Command Prompt in that folder**  
+   - Click the address bar in File Explorer, type `cmd`, press Enter.  
+   - CMD opens with the path set to your project folder (e.g., `Z:\learnMERN>`).
+
+3. **Start the backend server**  
+   - In the first CMD window, run:
+     ```cmd
+     npm run dev --prefix backend
+     ```
+   - This starts your Express server with nodemon.
+
+4. **Start the frontend app**  
+   - Open another CMD window in the same folder (`Z:\learnMERN>`).  
+   - Run:
+     ```cmd
+     npm run dev --prefix frontend
+     ```
+   - This starts the Vite React app.
+
+5. **Access the app in your browser**  
+   - Vite usually runs on [http://localhost:5173](http://localhost:5173).  
+   - Your backend runs on [http://localhost:8000](http://localhost:8000) unless you changed the port.
+
+---
+
+✅ So yes, your shorthand is correct:
+
+- **CMD 1:** `npm run dev --prefix backend`  
+- **CMD 2:** `npm run dev --prefix frontend`
+
+That’s all you need to get the project running again after the initial setup.
+
+---
+
+## Navigate to Chapters
+- [Chapter 1](#chapter-1)
+- [Chapter 2](#chapter-2)
+- [Chapter 3](#chapter-3)
+- [Chapter 4](#chapter-4)
+- [Chapter 5](#chapter-5)
+- [Chapter 6](#chapter-6)
+
+---
+
+## Chapter 4  
+### Familiarising with MongoDB Compass
+
+**Goal:** Students learn to use Compass GUI to create a database, a collection, and insert records. They also understand how MongoDB documents relate to traditional relational databases.
+
+---
+
+#### Step 1: Launch Compass and connect
+- Open **MongoDB Compass**.  
+- Sidebar -> Look for `Connections` and click `+` icon to add new connection
+- Set and Enable Default connection string:  
+  ```
+  mongodb://localhost:27017
+  ```
+- Name connection as `Local` , `set a color` and Click `Save`
+- Sidebar -> Look for `Local` in your `sidebar` and Click **Connect**.
+
+---
+
+#### Step 2: Create a database and collection
+1. Sidebar -> `Local` -> Click `+` icon to  **“Create Database”**.  
+2. Enter:
+   - **Database name:** `learnMERN`  
+   - **Collection name:** `students`  
+3. Click **Create Database**.
+
+---
+
+#### Step 3: Insert records via GUI
+1. Open `Sidebar` -> `Local > learnMERN > students`.  
+2. From `Add Data` Click **Insert Document**.  
+3. Add JSON documents like:
+   ```json
+   { "name": "Aisha", "email": "aisha@example.com", "age": 20 }
+   ```
+   ```json
+   { "name": "Ravi", "email": "ravi@example.com", "age": 22 }
+   ```
+   ```json
+   { "name": "Meera", "email": "meera@example.com", "age": 21 }
+   ```
+   OR
+   ```json
+   [
+      { "name": "Aisha", "email": "aisha@example.com", "age": 20 },
+      { "name": "Ravi", "email": "ravi@example.com", "age": 22 },
+      { "name": "Meera", "email": "meera@example.com", "age": 21 }
+   ]
+   ```
+
+4. Save each record.
+5. You should now see inserted records.
+> Make sure to `Refresh` if you dont see your records
+
+---
+
+#### Step 4: Understand JSON vs BSON
+- **JSON:** Human-readable text format you type in Compass or code.  
+- **BSON:** Binary JSON used internally by MongoDB, supports extra types like `ObjectId`, `Date`.  
+- **Analogy with MySQL:**  
+  - Database ≈ Schema  
+  - Collection ≈ Table  
+  - Document ≈ Row  
+  - Field ≈ Column  
+  - ObjectId ≈ Auto-increment primary key (but globally unique)
+
+---
+
+✅ **Checkpoint:** Students should now see multiple student records in Compass and understand how MongoDB data maps to relational concepts.
+
+---
+
+## Navigate to Chapters
+- [Chapter 1](#chapter-1)
+- [Chapter 2](#chapter-2)
+- [Chapter 3](#chapter-3)
+- [Chapter 4](#chapter-4)
+- [Chapter 5](#chapter-5)
+- [Chapter 6](#chapter-6)
+
+---
+
+## Chapter 5  
+### CRUD Operations at Express backend via `server.js`
+
+**Goal:** Students perform CRUD operations programmatically using Express + Mongoose, verifying changes in Compass after each step.
+
+---
+
+## ✅ Step 0: Define Student Schema (before CRUD routes)
+Add this at the top of `server.js` (or in a separate `models/student.js` file):
+
+In **Step 0 (Schema definition)**, should define the **structure of documents** (via Mongoose schema) and the **model name** (`Student`).  we need to explicitly mention the database (`learnMERN`) and the collection (`students`)
+
+---
+
+###  Step 0: Connect to your database + specify collection structure
+```js
+import mongoose from 'mongoose';
+
+// Connect to database 'learnMERN'
+await mongoose.connect('mongodb://localhost:27017/learnMERN');
+
+// Define schema
+const studentSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  age: { type: Number, required: true }
+});
+
+// Create model -> collection will be 'students'
+const Student = mongoose.model('Student', studentSchema);
+
+export default Student;
+```
+
+- **Database:** `learnMERN` (from connection string).  
+- **Collection:** `students` (pluralized from `Student` model).  
+- **Schema:** Defines the structure of documents (fields, types, rules).  
+- **Model:** A wrapper around the schema that gives you methods like `find()`, `create()`, `findByIdAndUpdate()`, etc.  
+- **Required fields:** Ensures students can’t insert incomplete records.
+
+---
+
+### 🔑 How database & collection are specified in Mongoose
+1. **Database name**  
+   - Comes from the connection string you use when connecting:  
+     ```js
+     await mongoose.connect('mongodb://localhost:27017/learnMERN');
+     ```
+   - Here, `learnMERN` is the database name.  
+   - If the database doesn’t exist yet, MongoDB will create it automatically when you insert the first document.
+
+2. **Collection name**  
+   - Comes from the **model name** you pass to `mongoose.model()`.  
+   - Example:
+     ```js
+     const Student = mongoose.model('Student', studentSchema);
+     ```
+   - Mongoose automatically pluralizes the model name → `Student` becomes `students`.  
+   - So documents will be stored in the `students` collection inside the `learnMERN` database.
+
+---
+
+### CRUD Operations
+
+#### Step 1: List students (Read)
+- Add a GET route in `server.js`:
+  ```js
+  app.get('/api/students', async (req, res) => {
+    try {
+      const students = await Student.find();
+      res.json(students);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  ```
+- **Test:** Open new cmd window and run the following:
+   ```c
+   curl http://localhost:8000/api/students
+   ```  
+- **Verify:** Matches the records inserted via Compass GUI.
+
+---
+
+#### Step 2: Insert record (Create)
+- Add a POST route:
+  ```js
+   app.post('/api/students', async (req, res) => {
+      try {
+      const student = await Student.create(req.body);
+      res.status(201).json("Record inserted");
+      } catch (err) {
+      res.status(400).json({ error: err.message });
+      }
+   });
+  ```
+  > You can use this instead see the inserted record:
+  > `res.status(201).json(student);`
+- **Test:** Open new cmd window and run the following:
+   ```c
+   curl -X POST http://localhost:8000/api/students ^
+   -H "Content-Type: application/json" ^
+   -d "{\"name\":\"Shashi\",\"email\":\"shashi@example.com\",\"age\":22}"
+   ```  
+- **Verify:** New record appears in Compass.
+
+---
+
+#### Step 3: Delete record (Delete)
+- Add a DELETE route:
+  ```js
+  app.delete('/api/students/:id', async (req, res) => {
+    try {
+      await Student.findByIdAndDelete(req.params.id);
+      res.json("Record Deleted");
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+  ```
+- **Test:** Open new cmd window and run the following:
+   ```c
+   curl -X DELETE http://localhost:8000/api/students/692850edf9d3c59a5694b299
+   ```  
+- **Verify:** Document disappears from Compass.
+
+---
+
+#### Step 4: Update record (Update)
+- Add a PUT route:
+  ```js
+  app.put('/api/students/:id', async (req, res) => {
+    try {
+      const student = await Student.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      res.json("Record Updated");
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+  ```
+- **Test:** Open new cmd window and run the following:
+   ```c
+   curl -X PUT http://localhost:8000/api/students/692850edf9d3c59a5694b299 ^
+   -H "Content-Type: application/json" ^
+   -d "{\"age\":23}"
+   ```  
+- **Verify:** Compass shows updated document.
+
+---
+
+
+✅ **Checkpoint:** After Chapter 4, students can manipulate MongoDB data both via Compass GUI and programmatically through Express/Mongoose.
+
+---
+
+## Navigate to Chapters
+- [Chapter 1](#chapter-1)
+- [Chapter 2](#chapter-2)
+- [Chapter 3](#chapter-3)
+- [Chapter 4](#chapter-4)
+- [Chapter 5](#chapter-5)
+- [Chapter 6](#chapter-6)
+
+---
+
+# Chapter 6 
+## step by step: React frontend CRUD
+
+This walkthrough builds the frontend piece by piece. Each step extends the previous code, so students can paste, run, and see the app evolve toward the final working App.js.
+
+---
+
+## Step 1: Fetch and display the student list
+
+#### What students learn
+- **useState:** Store students in component state.
+- **useEffect:** Run code once on mount to fetch data.
+- **fetch:** Call the backend’s GET API.
+
+#### Code to paste (App.js)
+```jsx
+import React, { useState, useEffect } from "react";
+
+function App() {
+  const [students, setStudents] = useState([]);
+
+  // Load students on initial render
+  useEffect(() => {
+    fetch("http://localhost:8000/api/students")
+      .then(res => res.json())
+      .then(data => setStudents(data));
+  }, []);
+
+  return (
+    <div style={{ margin: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1>🎓 Student Management</h1>
+
+      {/* Student List */}
+      <ul>
+        {students.map(s => (
+          <li key={s._id}>
+            {s.name} ({s.age}) - {s.email}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Key ideas
+- **State:** `students` holds the current list.
+- **Effect:** `useEffect` with `[]` runs once to fetch on mount.
+- **Rendering:** Map over `students` and show each document.
+
+---
+
+## Step 2: Add delete operation to the list
+
+#### What students learn
+- **Event handlers:** Trigger actions from UI.
+- **HTTP DELETE:** Remove a record via API.
+- **Reload pattern:** After mutation, re-fetch the list for consistency.
+
+#### Code to paste (replace the App component with this)
+```jsx
+import React, { useState, useEffect } from "react";
+
+function App() {
+  const [students, setStudents] = useState([]);
+
+  const loadStudents = () => {
+    fetch("http://localhost:8000/api/students")
+      .then(res => res.json())
+      .then(data => setStudents(data));
+  };
+
+  useEffect(() => {
+    loadStudents();
+  }, []);
+
+// <=== New Code Here ===>
+  const handleDelete = id => {
+    fetch(`http://localhost:8000/api/students/${id}`, { method: "DELETE" })
+      .then(() => loadStudents());
+  };
+// <=== New Code Here ===>
+
+  return (
+    <div style={{ margin: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1>🎓 Student Management</h1>
+
+      <ul>
+        {students.map(s => (
+          <li key={s._id} style={{ marginBottom: "0.5rem" }}>
+            {s.name} ({s.age}) - {s.email}
+            // <=== New Code Here ===>
+            <button onClick={() => handleDelete(s._id)} style={{ marginLeft: "0.5rem" }}>
+              Delete
+            </button>
+            // <=== New Code Here ===>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Key ideas
+- **Helper function:** `loadStudents()` centralizes fetching logic.
+- **Delete:** Call backend, then refresh list with `loadStudents()`.
+
+---
+
+## Step 3: Add a form to create students
+
+#### What students learn
+- **Form state:** Track user input with `useState`.
+- **Controlled inputs:** `value` + `onChange`.
+- **HTTP POST:** Send JSON to create a new record.
+
+#### Code to paste (extends Step 2)
+```jsx
+import React, { useState, useEffect } from "react";
+
+function App() {
+  const [students, setStudents] = useState([]);  
+// <=== New Code Here ===>
+  const [form, setForm] = useState({ name: "", email: "", age: "" });
+// <=== New Code Here ===>
+
+  const loadStudents = () => {
+    fetch("http://localhost:8000/api/students")
+      .then(res => res.json())
+      .then(data => setStudents(data));
+  };
+
+  useEffect(() => {
+    loadStudents();
+  }, []);
+
+// <=== New Code Here ===>
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    fetch("http://localhost:8000/api/students", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    })
+      .then(res => res.json())
+      .then(() => {
+        loadStudents();                 // refresh after create
+        setForm({ name: "", email: "", age: "" }); // reset form
+      });
+  };
+// <=== New Code Here ===>
+
+  const handleDelete = id => {
+    fetch(`http://localhost:8000/api/students/${id}`, { method: "DELETE" })
+      .then(() => loadStudents());
+  };
+
+  return (
+    <div style={{ margin: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1>🎓 Student Management</h1>
+
+      // <=== New Code Here ===>
+      {/* Form */}
+      <form onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
+        <input
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="age"
+          placeholder="Age"
+          value={form.age}
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">Add Student</button>
+      </form>
+      // <=== New Code Here ===>
+
+      {/* Student List */}
+      <ul>
+        {students.map(s => (
+          <li key={s._id} style={{ marginBottom: "0.5rem" }}>
+            {s.name} ({s.age}) - {s.email}
+            <button onClick={() => handleDelete(s._id)} style={{ marginLeft: "0.5rem" }}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Key ideas
+- **Controlled inputs:** Keep form data in React state.
+- **Submit handler:** Prevent default, POST JSON, reload list, reset form.
+
+---
+
+## Step 4: Implement update using the same form
+
+#### What students learn
+- **Edit mode:** Track which record is being edited.
+- **PUT:** Send updates to backend.
+- **Form reuse:** Populate form with selected student, switch button label.
+
+#### Code to paste (final step before the complete app)
+```jsx
+import React, { useState, useEffect } from "react";
+
+function App() {
+  const [students, setStudents] = useState([]);
+  const [form, setForm] = useState({ name: "", email: "", age: "" });
+  const [editingId, setEditingId] = useState(null);
+
+  const loadStudents = () => {
+    fetch("http://localhost:8000/api/students")
+      .then(res => res.json())
+      .then(data => setStudents(data));
+  };
+
+  useEffect(() => {
+    loadStudents();
+  }, []);
+
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+// <=== New Code Here ===>
+  const handleSubmit = e => {
+    e.preventDefault();
+
+    if (editingId) {
+      // Update existing student
+      fetch(`http://localhost:8000/api/students/${editingId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      })
+        .then(res => res.json())
+        .then(() => {
+          loadStudents();
+          setForm({ name: "", email: "", age: "" });
+          setEditingId(null);
+        });
+    } else {
+      // Create new student
+      fetch("http://localhost:8000/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      })
+        .then(res => res.json())
+        .then(() => {
+          loadStudents();
+          setForm({ name: "", email: "", age: "" });
+        });
+    }
+
+  };
+// <=== New Code Here ===>    
+
+  const handleDelete = id => {
+    fetch(`http://localhost:8000/api/students/${id}`, { method: "DELETE" })
+      .then(() => loadStudents());
+  };
+
+// <=== New Code Here ===>
+  const handleEdit = student => {
+    setForm({ name: student.name, email: student.email, age: student.age });
+    setEditingId(student._id);
+  };
+// <=== New Code Here ===>
+
+  return (
+    <div style={{ margin: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1>🎓 Student Management</h1>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
+        <input
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="age"
+          placeholder="Age"
+          value={form.age}
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">
+          {editingId ? "Update Student" : "Add Student"}
+        </button>
+      </form>
+
+      {/* Student List */}
+      <ul>
+        {students.map(s => (
+          <li key={s._id} style={{ marginBottom: "0.5rem" }}>
+            {s.name} ({s.age}) - {s.email}
+
+            // <=== New Code Here ===>
+            <button onClick={() => handleEdit(s)} style={{ marginLeft: "1rem" }}>
+              Edit
+            </button>
+            // <=== New Code Here ===>   
+
+            <button onClick={() => handleDelete(s._id)} style={{ marginLeft: "0.5rem" }}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Key ideas
+- **Editing state:** `editingId` toggles between create and update modes.
+- **Form reuse:** Same inputs handle both operations.
+- **Consistency:** After any mutation (POST/PUT/DELETE), call `loadStudents()`.
+
+---
+
+## Final note
+
+- **Flow insight:** Students see the natural progression: fetch → delete → create → update, while learning React state, effects, handlers, and REST calls.
+
+
+  </script>
 
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.3.2/markdown-it.min.js"></script>
@@ -109,80 +916,62 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <script>
-    fetch('tutorial.md')
-      .then(response => {
-        if (!response.ok) throw new Error('Failed to load code_output.md');
-        return response.text();
-      })
-      .then(source => {
-        const md = window.markdownit({
-          html: false,
-          linkify: false,
-          highlight: function (str, lang) {
-            if (lang && hljs.getLanguage(lang)) {
-              try {
-                return hljs.highlight(str, { language: lang }).value;
-              } catch (__) {}
-            }
-            return '';
-          }
-        }).use(window.markdownItAnchor, {
-          level: [2], // only H2 headings
-          slugify: s => s.trim().toLowerCase().replace(/[^\w]+/g, '-'),
-          permalink: false
-        });
+    // 1) Read markdown from the script tag
+    const source = document.getElementById('md-source').textContent;
 
-        document.getElementById('content').innerHTML = md.render(source);
+    // 2) Initialize markdown-it with highlight and anchor
+const md = window.markdownit({
+  html: true,
+  linkify: false,
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try { return hljs.highlight(str, { language: lang }).value; } catch (__) {}
+    }
+    return '';
+  }
+}).use(window.markdownItAnchor, {
+  level: [1,2,3,4,5,6],
+  slugify: s => s.trim().toLowerCase().replace(/[^\w]+/g, '-'),
+  permalink: false
+});
 
-        // Build stacked menu links
-        const headings = document.querySelectorAll('#content h2');
-        const menuLinks = document.getElementById('menu-links');
-        menuLinks.innerHTML = '';
-        headings.forEach(h => {
-          const link = document.createElement('a');
-          link.href = '#' + h.id;
-          link.textContent = h.textContent;
-          menuLinks.appendChild(link);
-        });
+    // 3) Render
+    document.getElementById('content').innerHTML = md.render(source);
 
-        // Toggle menu
-        const toggleBtn = document.getElementById('menu-toggle');
-        toggleBtn.addEventListener('click', () => {
-          menuLinks.style.display = (menuLinks.style.display === 'flex') ? 'none' : 'flex';
-        });
-
-        // Collapse menu when a link is clicked
-        menuLinks.querySelectorAll('a').forEach(link => {
-          link.addEventListener('click', () => {
-            menuLinks.style.display = 'none';
-          });
-        });
-
-
-        // Add copy buttons
-        document.querySelectorAll('#content pre').forEach(pre => {
-          const btn = document.createElement('button');
-          btn.textContent = 'Copy';
-          btn.className = 'copy-btn';
-          btn.addEventListener('click', () => {
-            const code = pre.querySelector('code')?.textContent || pre.textContent;
-            navigator.clipboard.writeText(code).then(() => {
-              btn.textContent = '✓ Copied!';
-              setTimeout(() => btn.textContent = 'Copy', 1500);
-            }).catch(err => {
-              console.error('Copy failed:', err);
-              btn.textContent = 'Failed';
-              setTimeout(() => btn.textContent = 'Copy', 1500);
-            });
-          });
-          pre.appendChild(btn);
-        });
-      })
-      .catch(err => {
-        document.getElementById('content').innerHTML = 
-          '<p style="color: red;">⚠️ Error: ' + err.message + '</p>' +
-          '<p>Make sure "code_output.md" is in the static directory.</p>';
+    // 4) Color picker logic
+    const picker = document.getElementById('colorPicker');
+    picker.addEventListener('input', (e) => {
+      const newColor = e.target.value;
+      document.querySelectorAll('pre').forEach(pre => {
+        pre.style.backgroundColor = newColor;
       });
+    });
   </script>
+  <script>
+  // After rendering markdown
+  document.getElementById('content').innerHTML = md.render(source);
+
+  // Inject copy buttons
+  document.querySelectorAll('#content pre').forEach(pre => {
+    // Create button
+    const btn = document.createElement('button');
+    btn.textContent = 'Copy';
+    btn.style.marginBottom = '0.5rem';
+    btn.style.cursor = 'pointer';
+
+    // Copy logic
+    btn.addEventListener('click', () => {
+      const code = pre.innerText; // get code text
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    });
+
+    // Insert button before the <pre>
+    pre.parentNode.insertBefore(btn, pre);
+  });
+</script>
+
 </body>
 </html>
