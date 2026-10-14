@@ -89,15 +89,15 @@ body {
 
 ## Chapter 1
 
-### Windows beginner setup for MERN in Command Prompt
+### Windows beginner setup for MERN in PowerShell
 
-You’ll guide students through creating the project folder on a specific drive, opening Command Prompt from that location, and running a single chained command to create subfolders and install all dependencies. This uses only Windows Command Prompt.
+You’ll guide students through creating the project folder on a specific drive, opening PowerShell from that location, and running a readable script to create the backend and frontend and install their dependencies.
 
 ---
 
 ### Prerequisites
 
-- **Install Node.js (LTS):** From nodejs.org, then verify in Command Prompt:
+- **Install Node.js (LTS):** From nodejs.org, then verify in PowerShell:
   ```
   node -v
   npm -v
@@ -111,91 +111,109 @@ You’ll guide students through creating the project folder on a specific drive,
 1. **Open File Explorer to your drive:**
    - **Action:** Click the drive you want (example: Z:).
 2. **Create the project folder:**
-   - **Action:** Right‑click → New → Folder → name it `TeachMERN`.
+   - **Action:** Right‑click → New → Folder → name it `StudentCRUD`.
 3. **Open the folder:**
-   - **Action:** Double‑click `TeachMERN` to enter `Z:\TeachMERN`.
+   - **Action:** Double‑click `StudentCRUD` to enter `Z:\StudentCRUD`.
 
 ---
 
-### Open Command Prompt at that exact location
+### Open PowerShell at that exact location
 
-1. **Launch CMD from the address bar:**
-   - **Action:** Click the File Explorer address bar, type `cmd`, press Enter.
-   - **Result:** Command Prompt opens with the path set to `Z:\TeachMERN>`.
+1. **Launch PowerShell from the address bar:**
+   - **Action:** Click the File Explorer address bar, type `powershell`, and press Enter.
+   - **Result:** PowerShell opens with the path set to your project folder (for example, `Z:\StudentCRUD`).
 
 ---
 
-### One-liner to create subfolders and install packages
+### Set up the backend and frontend
 
-Run this single command inside `Z:\TeachMERN`:
+Run this script once in PowerShell from the new, empty project folder. It creates the backend and frontend folders, installs their packages, and writes the starter backend server:
 
-```cmd
-mkdir backend frontend & npm init -y --prefix backend & npm install express mongoose cors dotenv nodemon --prefix backend & del package.json & del package-lock.json & npm pkg set main=server.js --prefix backend & npm pkg set scripts.dev="nodemon server.js" --prefix backend & npm pkg set scripts.start="node server.js" --prefix backend & >backend\server.js echo import express from 'express'; & echo import cors from 'cors'; >>backend\server.js & echo import dotenv from 'dotenv'; >>backend\server.js & echo. >>backend\server.js & echo dotenv.config(); // Load environment variables >>backend\server.js & echo. >>backend\server.js & echo const app = express(); >>backend\server.js & echo const port = process.env.PORT ^|^| 8000; // Default port >>backend\server.js & echo. >>backend\server.js & echo app.use(cors()); // Enable CORS >>backend\server.js & echo app.use(express.json()); // Parse JSON bodies >>backend\server.js & echo. >>backend\server.js & echo app.listen(port, () =^> { >>backend\server.js & echo     console.log("Server running on port: " + port); >>backend\server.js & echo }); >>backend\server.js & echo | npm create vite@latest frontend -- --template react & npm install --prefix frontend & npm install axios --prefix frontend & start cmd /k "npm run dev --prefix backend & cmd" & start http://localhost:5173/ & npm run dev --prefix frontend
+```powershell
+$ErrorActionPreference = 'Stop'
 
+New-Item -ItemType Directory -Force backend, frontend | Out-Null
+
+Push-Location backend
+npm init -y
+npm pkg set type=module main=server.js 'scripts.dev=nodemon server.js' 'scripts.start=node server.js'
+npm install express 'mongoose@^8' cors dotenv
+npm install --save-dev nodemon
+
+@'
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 8000;
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (_request, response) => {
+  response.json(`Backend Server is running`);
+});
+
+app.get('/api/health', (_request, response) => {
+  response.json({ status: 'ok' });
+});
+
+app.listen(port, () => {
+  console.log(`Backend Server running on port: ${port}`);
+});
+'@ | Set-Content -Encoding utf8 server.js
+Pop-Location
+
+npm create vite@6 frontend -- --template react
+Push-Location frontend
+npm install
+npm install axios
+Pop-Location
 ```
 
-You’re right — the **“What it does”** section in your draft only covers part of the one‑liner. Let’s expand it so students clearly understand every step that happens when they run that chained command.
+Run `npm run dev` separately from the `backend` and `frontend` folders when you’re ready to start the servers (see Chapter 3). The setup script only creates the project and installs packages; it does not start either server.
 
 ---
 
-## 🔎 What it does (expanded)
+## 🔎 What the setup script does
 
-- **`mkdir backend frontend`**  
-  Creates two subfolders inside `TeachMERN`: one for backend code and one for frontend code.
+- **`$ErrorActionPreference = 'Stop'`**  
+  Makes PowerShell stop on terminating PowerShell errors. Check that each npm command completes successfully before continuing.
 
-- **`npm init -y --prefix backend`**  
-  Initializes a default `package.json` inside the `backend` folder.
+- **`New-Item -ItemType Directory -Force backend, frontend`**  
+  Creates the backend and frontend folders if they do not already exist.
 
-- **`npm install express mongoose cors dotenv nodemon --prefix backend`**  
-  Installs backend dependencies:  
-  - **express** → web server framework  
-  - **mongoose** → MongoDB object modeling  
-  - **cors** → Cross‑Origin Resource Sharing middleware  
-  - **dotenv** → loads environment variables from `.env`  
-  - **nodemon** → auto‑restarts server on file changes
+- **`Push-Location backend` / `Pop-Location`**  
+  Temporarily changes into the backend folder to run its npm commands and create `server.js`, then returns to the project folder.
 
-- **`del package.json & del package-lock.json`**  
-  Deletes any accidental root‑level `package.json` and `package-lock.json` so only the backend/frontend ones remain.
+- **`npm init -y`**  
+  Initializes `backend/package.json` with default settings.
 
-- **`npm pkg set main=server.js --prefix backend`**  
-  Sets the backend entry point to `server.js`.
+- **`npm pkg set ...`**  
+  Configures the backend as an ES module project and adds `dev` (nodemon) and `start` (Node.js) scripts.
 
-- **`npm pkg set scripts.dev="nodemon server.js" --prefix backend`**  
-  Adds a `dev` script in backend’s `package.json` to run the server with nodemon.
+- **Backend `npm install` commands**  
+  Install Express, Mongoose 8, CORS, and dotenv as runtime dependencies, and nodemon as a development dependency.
 
-- **`npm pkg set scripts.start="node server.js" --prefix backend`**  
-  Adds a `start` script in backend’s `package.json` to run the server normally.
+- **`Set-Content ... server.js`**  
+  Writes the starter Express server, which enables CORS and JSON parsing and provides `/` and `/api/health` routes.
 
-- **`>backend\server.js`**  
-  Creates a `server.js` file inside `backend` with starter code:  
-  - Imports `express`, `cors`, `dotenv`  
-  - Configures environment variables  
-  - Sets up Express app with JSON parsing and CORS  
-  - Defines a port (`process.env.PORT || 8000`)  
-  - Starts the server and logs `"Server running on port: …"`
+- **`npm create vite@6 frontend -- --template react`**  
+  Creates a React frontend using Vite 6.
 
-- **`npm create vite@latest frontend -- --template react`**  
-  Bootstraps a new React app in the `frontend` folder using Vite.  
-
-- **`npm install --prefix frontend`**  
-  Installs all dependencies for the Vite React app.
-
-- **`start cmd /k "npm run dev --prefix backend & cmd"`**  
-  Opens a new Command Prompt window, runs the backend dev server (`nodemon server.js`), and keeps the window open for further commands.
-
-- **`start http://localhost:5173/`**  
-  Opens the default browser pointing to the Vite dev server URL.
-
-- **`npm run dev --prefix frontend`**  
-  Starts the frontend React app in the current CMD window.
+- **Frontend `npm install` commands**  
+  Install the Vite/React project dependencies and Axios.
 
 ---
 
 ## ✅ Quick checkpoints
-- **Folders created:** `backend` and `frontend` inside `TeachMERN`.  
-- **Backend ready:** `server.js` exists, backend `package.json` has scripts, dependencies installed.  
-- **Frontend ready:** Vite React app initialized, dependencies installed, Axios added.  
-- **Running servers:** Backend runs in its own CMD window, frontend runs in the current one, browser opens automatically.  
+- **Folders created:** `backend` and `frontend` inside the project folder.  
+- **Backend ready:** `backend/server.js` exists, backend `package.json` has `dev` and `start` scripts, and backend dependencies are installed.  
+- **Frontend ready:** Vite React app initialized, dependencies installed, and Axios added.  
+- **Servers:** Not started by this setup script; start them from their respective folders as described in Chapter 3.  
 
 ---
 
@@ -209,19 +227,17 @@ You’re right — the **“What it does”** section in your draft only covers 
 
 **Cause:** Windows PowerShell blocks script execution by default.  
 
-**Fix (step‑by‑step):**
-1. Press **Win + R**, type `powershell`, and hit Enter.  
-2. In the PowerShell window, run:  
-   ```powershell
-   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-   ```  
-3. Type `Y` when asked for confirmation.  
-4. Close PowerShell and reopen Command Prompt.  
-5. Test with:  
-   ```cmd
-   npm -v
-   ```  
-   → You should see the npm version number.
+**Fix:**
+- In PowerShell, try calling the Windows command shim directly:
+  ```powershell
+  npm.cmd -v
+  ```
+  For npm commands in the Chapter 1 setup script, use `npm.cmd` instead of `npm` if PowerShell blocks `npm.ps1`.
+- Alternatively, if you want to use the `npm` PowerShell shim, you can allow locally installed scripts for your Windows user. Open PowerShell and run:
+  ```powershell
+  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+  ```
+  Review the policy change before confirming it. Then reopen PowerShell and verify with `npm -v`.
 
 ---
 
@@ -268,17 +284,6 @@ You’re right — the **“What it does”** section in your draft only covers 
 
 ---
 
-
-Do you want me to also prepare a **visual flowchart** for Chapter 2 (Error → Cause → Fix) so it’s easy to drop into your PowerPoint slides?
-
-### 🎯 Teaching tips for your slides
-- Use **red error screenshots** (CMD showing the error).  
-- Follow with **green success screenshots** (npm version showing after fix).  
-- Add a **checkpoint slide**: “If you see a version number, npm is working!”  
-- Include a **warning box**: “Always run CMD as normal user — no need for admin unless specified.”  
-
----
-
 ## Navigate to Chapters
 - [Chapter 1](#chapter-1)
 - [Chapter 2](#chapter-2)
@@ -294,24 +299,25 @@ Do you want me to also prepare a **visual flowchart** for Chapter 2 (Error → C
 ### How to run the project next time
 
 1. **Open your project folder in File Explorer**  
-   - Navigate to the main folder of your project `Z:\learnMERN` which contains the backend and frontend.
+   - Navigate to the main folder of your project (for example, `Z:\StudentCRUD`) which contains the backend and frontend.
 
-2. **Launch Command Prompt in that folder**  
-   - Click the address bar in File Explorer, type `cmd`, press Enter.  
-   - CMD opens with the path set to your project folder (e.g., `Z:\learnMERN>`).
+2. **Open two PowerShell windows in the project folder**  
+   - In File Explorer, click the address bar, type `powershell`, and press Enter.  
+   - Repeat to open a second PowerShell window in the same project folder (e.g., `Z:\StudentCRUD`).
 
 3. **Start the backend server**  
-   - In the first CMD window, run:
-     ```cmd
-     npm run dev --prefix backend
+   - In the first PowerShell window, run:
+     ```powershell
+     cd backend
+     npm run dev
      ```
    - This starts your Express server with nodemon.
 
 4. **Start the frontend app**  
-   - Open another CMD window in the same folder (`Z:\learnMERN>`).  
-   - Run:
-     ```cmd
-     npm run dev --prefix frontend
+   - In the second PowerShell window, run:
+     ```powershell
+     cd frontend
+     npm run dev
      ```
    - This starts the Vite React app.
 
@@ -320,11 +326,6 @@ Do you want me to also prepare a **visual flowchart** for Chapter 2 (Error → C
    - Your backend runs on [http://localhost:8000](http://localhost:8000) unless you changed the port.
 
 ---
-
-✅ So yes, your shorthand is correct:
-
-- **CMD 1:** `npm run dev --prefix backend`  
-- **CMD 2:** `npm run dev --prefix frontend`
 
 That’s all you need to get the project running again after the initial setup.
 
@@ -429,62 +430,69 @@ That’s all you need to get the project running again after the initial setup.
 
 ---
 
-## ✅ Step 0: Define Student Schema (before CRUD routes)
-Add this at the top of `server.js` (or in a separate `models/student.js` file):
+## ✅ Step 0: Create the Student model and connect to MongoDB
 
-In **Step 0 (Schema definition)**, should define the **structure of documents** (via Mongoose schema) and the **model name** (`Student`).  we need to explicitly mention the database (`learnMERN`) and the collection (`students`)
+Keep the schema/model separate from the Express server. The model describes student documents; `server.js` owns the database connection and API routes.
 
----
+1. In the `backend` folder, create a `models` folder and a file named `student.js`.
+2. Add this code to `backend/models/student.js`:
+   ```js
+   import mongoose from 'mongoose';
 
-###  Step 0: Connect to your database + specify collection structure
-```js
-import mongoose from 'mongoose';
+   const studentSchema = new mongoose.Schema({
+     name: { type: String, required: true },
+     email: { type: String, required: true },
+     age: { type: Number, required: true }
+   });
 
-// Connect to database 'learnMERN'
-await mongoose.connect('mongodb://localhost:27017/learnMERN');
+   const Student = mongoose.model('Student', studentSchema, 'students');
 
-// Define schema
-const studentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  age: { type: Number, required: true }
-});
+   export default Student;
+   ```
+   The third argument explicitly sets the collection name to `students`.
+3. Create `backend/.env` with your local MongoDB connection string:
+   ```env
+   MONGODB_URI=mongodb://127.0.0.1:27017/learnMERN
+   ```
+   Add `.env` to `backend/.gitignore` so connection settings are not committed:
+   ```gitignore
+   node_modules/
+   .env
+   ```
+4. In `backend/server.js`, add these imports alongside the existing imports:
+   ```js
+   import mongoose from 'mongoose';
+   import Student from './models/student.js';
+   ```
+5. Replace the existing `app.listen(...)` at the bottom of `server.js` with:
+   ```js
+   const startMongoServer = async () => {
+     try {
+       await mongoose.connect(process.env.MONGODB_URI);
+       console.log('Connected to MongoDB');
+       app.listen(port, () => {
+         console.log(`Server running on port: ${port}`);
+       });
+     } catch (error) {
+       console.error('Failed to connect to MongoDB:', error);
+       process.exit(1);
+     }
+   };
 
-// Create model -> collection will be 'students'
-const Student = mongoose.model('Student', studentSchema);
+   startMongoServer();
+   ```
 
-export default Student;
-```
-
-- **Database:** `learnMERN` (from connection string).  
-- **Collection:** `students` (pluralized from `Student` model).  
-- **Schema:** Defines the structure of documents (fields, types, rules).  
-- **Model:** A wrapper around the schema that gives you methods like `find()`, `create()`, `findByIdAndUpdate()`, etc.  
-- **Required fields:** Ensures students can’t insert incomplete records.
-
----
-
-### 🔑 How database & collection are specified in Mongoose
-1. **Database name**  
-   - Comes from the connection string you use when connecting:  
-     ```js
-     await mongoose.connect('mongodb://localhost:27017/learnMERN');
-     ```
-   - Here, `learnMERN` is the database name.  
-   - If the database doesn’t exist yet, MongoDB will create it automatically when you insert the first document.
-
-2. **Collection name**  
-   - Comes from the **model name** you pass to `mongoose.model()`.  
-   - Example:
-     ```js
-     const Student = mongoose.model('Student', studentSchema);
-     ```
-   - Mongoose automatically pluralizes the model name → `Student` becomes `students`.  
-   - So documents will be stored in the `students` collection inside the `learnMERN` database.
+- **Database:** `learnMERN`, specified after the final `/` in `MONGODB_URI`.
+- **Collection:** `students`, specified explicitly as the third argument to `mongoose.model()`.
+- **Schema:** Defines document fields, types, and validation rules.
+- **Model:** `Student` provides methods such as `find()`, `create()`, and `findByIdAndUpdate()`.
+- **Connection:** `server.js` connects before it starts listening, so routes do not serve requests before MongoDB is ready.
 
 ---
 
 ### CRUD Operations
+
+The examples below are routes to add to `server.js`. The `Student` model is already imported in Step 0.
 
 #### Step 1: List students (Read)
 - Add a GET route in `server.js`:
@@ -576,8 +584,28 @@ export default Student;
 
 ---
 
+### Test the same CRUD routes with Postman in VS Code
 
-✅ **Checkpoint:** After Chapter 4, students can manipulate MongoDB data both via Compass GUI and programmatically through Express/Mongoose.
+Postman is an alternative to the curl commands above. Keep the backend running in one terminal while sending requests from Postman.
+
+1. In VS Code, open **Extensions** (`Ctrl+Shift+X`), search for **Postman**, and install the Postman extension published by Postman.
+2. Open the Postman panel from the Activity Bar, create a new HTTP request, and set its URL to `http://localhost:8000`.
+3. For each operation below, select the HTTP method, enter the full URL, and click **Send**:
+
+| Operation | Method | URL | Body |
+|---|---|---|---|
+| List students | `GET` | `http://localhost:8000/api/students` | None |
+| Insert student | `POST` | `http://localhost:8000/api/students` | Select **Body** → **raw** → **JSON**, then enter `{"name":"Shashi","email":"shashi@example.com","age":22}` |
+| Delete student | `DELETE` | `http://localhost:8000/api/students/<studentId>` | None |
+| Update student | `PUT` | `http://localhost:8000/api/students/<studentId>` | Select **Body** → **raw** → **JSON**, then enter `{"age":23}` |
+
+For `<studentId>`, first send the list request and copy the `_id` value of an existing student from the response. Use that same ID for the delete or update request. Postman sets the JSON content type when you choose **raw** and **JSON** for the body.
+
+- **Verify:** Check the response in Postman and confirm the inserted, updated, or deleted document in MongoDB Compass. The POST and PUT examples currently return confirmation text; send the GET request again to inspect the stored values.
+
+---
+
+✅ **Checkpoint:** Students can test the CRUD routes with either curl or Postman and verify changes in Compass.
 
 ---
 
