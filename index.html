@@ -176,6 +176,55 @@ npm install axios
 Pop-Location
 ```
 
+OR
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+    
+$ErrorActionPreference = 'Stop'
+
+New-Item -ItemType Directory -Force backend, frontend | Out-Null
+
+Push-Location backend
+npm init -y
+npm pkg set type=module main=server.js 'scripts.dev=nodemon server.js' 'scripts.start=node server.js'
+npm install express 'mongoose@^8' cors dotenv
+npm install --save-dev nodemon
+
+@'
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 8000;
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (_request, response) => {
+  response.json(`Backend Server is running`);
+});
+
+app.get('/api/health', (_request, response) => {
+  response.json({ status: 'ok' });
+});
+
+app.listen(port, () => {
+  console.log(`Backend Server running on port: ${port}`);
+});
+'@ | Set-Content -Encoding utf8 server.js
+Pop-Location
+
+npm create vite@6 frontend --- --template react
+Push-Location frontend
+npm install
+npm install axios
+Pop-Location
+```
+    
 Run `npm run dev` separately from the `backend` and `frontend` folders when you’re ready to start the servers (see Chapter 3). The setup script only creates the project and installs packages; it does not start either server.
 
 ---
@@ -330,6 +379,52 @@ Run `npm run dev` separately from the `backend` and `frontend` folders when you�
 ---
 
 That’s all you need to get the project running again after the initial setup.
+
+---
+
+### Understanding the MERN project folder structure
+
+Your project is divided into a **backend** (Node.js, Express, and Mongoose) and a **frontend** (React and Vite). Here is a simplified view of the important folders and files:
+
+```text
+StudentCRUD/
+├── backend/
+│   ├── node_modules/
+│   ├── models/
+│   │   └── student.js
+│   ├── .env
+│   ├── package.json
+│   └── server.js
+├── frontend/
+│   ├── node_modules/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── index.html
+│   └── package.json
+└── index.html  (this tutorial)
+```
+
+#### Backend files and folders
+
+- **`backend/node_modules/`** — Packages installed for the backend, such as Express, Mongoose, and Nodemon. npm creates this folder; don’t edit it manually. It can be recreated by running `npm install` inside `backend`.
+- **`backend/package.json`** — The backend project manifest. It lists its dependencies and defines commands such as `npm run dev` and `npm start`.
+- **`backend/server.js`** — The Express server entry point. It configures middleware, connects to MongoDB, starts listening for requests, and defines the API routes.
+- **`backend/.env`** — Local environment settings, including `MONGODB_URI`. Keep secrets and machine-specific settings out of source control; don’t share or commit this file.
+- **`backend/models/`** — Mongoose models that define the shape of database documents and provide methods for working with them.
+- **`backend/models/student.js`** — Defines and exports the `Student` model used by the CRUD API routes.
+
+#### Frontend files and folders
+
+- **`frontend/node_modules/`** — Packages installed for the frontend, such as React, Vite, and Axios. This is separate from the backend’s dependencies and is recreated with `npm install` inside `frontend`.
+- **`frontend/package.json`** — The frontend project manifest. It lists its dependencies and scripts, including `npm run dev`, `npm run build`, and `npm run lint`.
+- **`frontend/index.html`** — Vite’s HTML entry page. It contains the root element where React mounts the application and loads the frontend entry module.
+- **`frontend/src/`** — The main React application source folder. `App.jsx` contains the app UI, `main.jsx` mounts the React app into the HTML root, and the CSS files provide styling.
+
+> There are two different `index.html` files: `frontend/index.html` is the Vite app’s entry page; the root-level `index.html` in this tutorial project contains these teaching notes.
 
 ---
 
