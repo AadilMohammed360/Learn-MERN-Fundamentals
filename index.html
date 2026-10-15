@@ -127,9 +127,11 @@ You’ll guide students through creating the project folder on a specific drive,
 
 ### Set up the backend and frontend
 
-Run this script once in PowerShell from the new, empty project folder. It creates the backend and frontend folders, installs their packages, and writes the starter backend server:
+Run this script once in PowerShell from the new, empty project folder. It creates the backend and frontend folders, installs their packages, and writes the starter backend server. If it asks for framework select React and variant Javascript:
 
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+    
 $ErrorActionPreference = 'Stop'
 
 New-Item -ItemType Directory -Force backend, frontend | Out-Null
