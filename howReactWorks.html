@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>How React Works | From Files to Webpage</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #0b1220;
+      --panel: #111c2d;
+      --panel-light: #17253a;
+      --line: #2a3b54;
+      --text: #eef4ff;
+      --muted: #a8b7ca;
+      --cyan: #67e8f9;
+      --blue: #82aaff;
+      --purple: #c4a7ff;
+      --green: #86efac;
+      --amber: #fcd27a;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page);
+      color: var(--text);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(ellipse at 12% 0%, rgba(59, 130, 246, .15), transparent 36rem),
+        radial-gradient(ellipse at 90% 25%, rgba(139, 92, 246, .12), transparent 34rem),
+        var(--page);
+      line-height: 1.6;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 54px 0 72px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 14px;
+      color: var(--cyan);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 25px;
+      height: 2px;
+      background: currentColor;
+      content: "";
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 850px;
+      margin-bottom: 16px;
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      letter-spacing: -.055em;
+      line-height: 1.03;
+    }
+
+    h1 span {
+      color: var(--cyan);
+      white-space: nowrap;
+    }
+
+    .intro {
+      max-width: 760px;
+      margin-bottom: 30px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .callout {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 17px 20px;
+      border: 1px solid rgba(252, 210, 122, .35);
+      border-radius: 14px;
+      background: rgba(252, 210, 122, .07);
+      color: #f8e8c4;
+    }
+
+    .callout strong { color: var(--amber); }
+    .callout p { margin: 0; }
+
+    .section {
+      margin-top: 56px;
+    }
+
+    .section-heading {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .number {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      place-items: center;
+      border: 1px solid rgba(103, 232, 249, .35);
+      border-radius: 12px;
+      background: rgba(103, 232, 249, .1);
+      color: var(--cyan);
+      font-weight: 800;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      letter-spacing: -.025em;
+    }
+
+    .diagram-shell {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(17, 28, 45, .82);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, .22);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr) 48px minmax(0, 1fr);
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .file-card, .result-card {
+      position: relative;
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(160deg, rgba(23, 37, 58, .95), rgba(15, 25, 40, .95));
+    }
+
+    .file-card .tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 3px 8px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .tag-html { color: var(--amber); }
+    .tag-entry { color: var(--cyan); }
+    .tag-app { color: var(--purple); }
+    .tag-result { color: var(--green); }
+
+    .file-card h3, .result-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.12rem;
+    }
+
+    .file-card p, .result-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .91rem;
+    }
+
+    code, pre {
+      font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+    }
+
+    code {
+      color: #d8e9ff;
+      font-size: .9em;
+    }
+
+    .code-line {
+      display: block;
+      margin-top: 13px;
+      padding: 9px 10px;
+      overflow-wrap: anywhere;
+      border: 1px solid rgba(130, 170, 255, .17);
+      border-radius: 9px;
+      background: rgba(8, 14, 24, .58);
+      color: #c6d5ea;
+      font-size: .78rem;
+    }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+
+    .flow-caption {
+      margin: 18px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: .9rem;
+    }
+
+    .component-layout {
+      display: grid;
+      grid-template-columns: minmax(220px, .72fr) 1.28fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .root-box {
+      padding: 22px;
+      border: 1px dashed rgba(252, 210, 122, .65);
+      border-radius: 18px;
+      background: rgba(252, 210, 122, .045);
+    }
+
+    .root-box h3 {
+      margin: 0 0 8px;
+      color: var(--amber);
+    }
+
+    .root-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .root-box code { color: #ffe8ae; }
+
+    .tree {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+    }
+
+    .node {
+      width: min(100%, 430px);
+      padding: 15px 18px;
+      border: 1px solid rgba(196, 167, 255, .45);
+      border-radius: 13px;
+      background: rgba(196, 167, 255, .09);
+      text-align: center;
+    }
+
+    .node strong {
+      display: block;
+      color: #e1d4ff;
+    }
+
+    .node small {
+      color: var(--muted);
+      font-size: .79rem;
+    }
+
+    .tree-down {
+      color: var(--purple);
+      line-height: 1;
+      font-size: 1.35rem;
+    }
+
+    .children {
+      display: grid;
+      width: min(100%, 520px);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .children .node {
+      width: auto;
+      border-color: rgba(103, 232, 249, .35);
+      background: rgba(103, 232, 249, .06);
+    }
+
+    .children .node strong { color: #c6f7ff; }
+    .children .node:last-child {
+      grid-column: 1 / -1;
+      width: min(100%, 250px);
+      justify-self: center;
+      border-color: rgba(134, 239, 172, .35);
+      background: rgba(134, 239, 172, .055);
+    }
+    .children .node:last-child strong { color: #c7f9d5; }
+
+    .note {
+      margin: 18px 0 0;
+      padding-left: 14px;
+      border-left: 2px solid var(--purple);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .detail {
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--panel);
+    }
+
+    .detail h3 {
+      margin-bottom: 8px;
+      color: var(--cyan);
+      font-size: 1rem;
+    }
+
+    .detail p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .89rem;
+    }
+
+    .detail:nth-child(2) h3 { color: var(--purple); }
+    .detail:nth-child(3) h3 { color: var(--green); }
+
+    .code-flow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .code-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #080e18;
+    }
+
+    .code-title {
+      padding: 11px 15px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 700;
+    }
+
+    pre {
+      margin: 0;
+      padding: 17px;
+      overflow-x: auto;
+      color: #d5e4f7;
+      font-size: .78rem;
+      line-height: 1.65;
+    }
+
+    .token-comment { color: #7790aa; }
+    .token-key { color: #c4a7ff; }
+    .token-string { color: #86efac; }
+    .token-fn { color: #67e8f9; }
+
+    .sequence {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      counter-reset: sequence;
+    }
+
+    .sequence-step {
+      position: relative;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      counter-increment: sequence;
+    }
+
+    .sequence-step::before {
+      display: grid;
+      width: 27px;
+      height: 27px;
+      margin-bottom: 10px;
+      place-items: center;
+      border-radius: 9px;
+      background: rgba(103, 232, 249, .13);
+      color: var(--cyan);
+      content: counter(sequence);
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    .sequence-step strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: .9rem;
+    }
+
+    .sequence-step span {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .closing {
+      margin-top: 54px;
+      padding: 24px;
+      border: 1px solid rgba(103, 232, 249, .28);
+      border-radius: 18px;
+      background: linear-gradient(100deg, rgba(103, 232, 249, .09), rgba(130, 170, 255, .06));
+      color: #d8e9ff;
+      text-align: center;
+      font-size: 1.04rem;
+    }
+
+    .closing strong { color: var(--cyan); }
+
+    @media (max-width: 760px) {
+      .flow {
+        grid-template-columns: 1fr;
+      }
+      .arrow {
+        min-height: 23px;
+        transform: rotate(90deg);
+      }
+      .component-layout,
+      .code-flow {
+        grid-template-columns: 1fr;
+      }
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      .sequence {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 460px) {
+      .page {
+        width: min(100% - 24px, 1120px);
+        padding-top: 34px;
+      }
+      .diagram-shell { padding: 15px; }
+      .children { grid-template-columns: 1fr; }
+      .children .node:last-child {
+        grid-column: auto;
+        width: 100%;
+      }
+      .sequence { grid-template-columns: 1fr; }
+      h1 span { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">React, visually explained</p>
+      <h1>From project files to a <span>living webpage</span></h1>
+      <p class="intro">
+        React starts from the HTML page, enters through <code>main.jsx</code>,
+        builds a tree of components beginning with <code>App.jsx</code>, then
+        renders the result into the page’s root element.
+      </p>
+      <aside class="callout">
+        <span aria-hidden="true">💡</span>
+        <p><strong>Important idea:</strong> React does not paste the contents of <code>App.jsx</code> into the HTML file. The HTML provides an empty mount point; React creates and updates the visible DOM inside it.</p>
+      </aside>
+    </header>
+
+    <section class="section" aria-labelledby="vanilla-title">
+      <div class="section-heading">
+        <span class="number">01</span>
+        <h2>First, the vanilla JavaScript DOM version</h2>
+      </div>
+      <div class="diagram-shell">
+        <p class="intro" style="margin-bottom:20px;font-size:1rem">
+          Before React, JavaScript can build visible page content by finding an HTML element, creating DOM elements, adding text, and attaching them to the page.
+        </p>
+        <div class="code-flow">
+          <article class="code-card">
+            <div class="code-title">frontend/index.html — empty destination</div>
+            <pre><code>&lt;body&gt;
+  &lt;div id="root"&gt;&lt;/div&gt;
+  &lt;script type="module"
+    src="/src/main.js"&gt;&lt;/script&gt;
+&lt;/body&gt;</code></pre>
+          </article>
+          <article class="code-card">
+            <div class="code-title">src/main.js — manually create and attach DOM</div>
+            <pre><code><span class="token-comment">// Find the empty destination in the HTML</span>
+<span class="token-key">const</span> root = document.<span class="token-fn">getElementById</span>(<span class="token-string">'root'</span>);
+
+<span class="token-comment">// Create real DOM elements</span>
+<span class="token-key">const</span> heading = document.<span class="token-fn">createElement</span>(<span class="token-string">'h1'</span>);
+heading.textContent = <span class="token-string">'Student Management'</span>;
+
+<span class="token-key">const</span> message = document.<span class="token-fn">createElement</span>(<span class="token-string">'p'</span>);
+message.textContent = <span class="token-string">'Welcome to the app.'</span>;
+
+<span class="token-comment">// Attach the new elements under #root</span>
+root.<span class="token-fn">appendChild</span>(heading);
+root.<span class="token-fn">appendChild</span>(message);</code></pre>
+          </article>
+        </div>
+        <div class="detail-grid" style="margin-top:16px">
+          <article class="detail">
+            <h3><code>getElementById</code></h3>
+            <p>Finds the existing <code>&lt;div id="root"&gt;</code> in the HTML page.</p>
+          </article>
+          <article class="detail">
+            <h3><code>createElement</code> + <code>textContent</code></h3>
+            <p>Creates real DOM elements and gives them text. <code>textContent</code> treats text as text, rather than parsing it as HTML.</p>
+          </article>
+          <article class="detail">
+            <h3><code>appendChild</code></h3>
+            <p>Attaches each created element inside the root so the browser can display it.</p>
+          </article>
+        </div>
+        <aside class="callout" style="margin-top:18px">
+          <span aria-hidden="true">↔</span>
+          <p><strong>Useful comparison:</strong> This is the manual DOM work that React takes responsibility for. React’s <code>createRoot(root).render(&lt;App /&gt;)</code> is not just an alias for <code>appendChild</code>; it renders a component tree and keeps the DOM in sync when state or props change.</p>
+        </aside>
+        <p class="note">You may see <code>innerHTML</code> used to insert markup as a string, but this example uses <code>createElement</code> and <code>textContent</code> to make the DOM steps visible and avoid treating user-provided text as HTML.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pipeline-title">
+      <div class="section-heading">
+        <span class="number">02</span>
+        <h2>The startup pipeline</h2>
+      </div>
+      <div class="diagram-shell">
+        <div class="flow">
+          <article class="file-card">
+            <span class="tag tag-html">HTML shell</span>
+            <h3><code>frontend/index.html</code></h3>
+            <p>The browser loads this page. Its empty <code>#root</code> element is where React will display the app.</p>
+            <span class="code-line">&lt;div id="root"&gt;&lt;/div&gt;</span>
+          </article>
+          <div class="arrow" aria-label="loads">→</div>
+          <article class="file-card">
+            <span class="tag tag-entry">Entry point</span>
+            <h3><code>src/main.jsx</code></h3>
+            <p>The JavaScript entry module imports React, styles, and the top-level <code>App</code>, then calls <code>createRoot(...).render(...)</code>.</p>
+            <span class="code-line">createRoot(rootElement).render(&lt;App /&gt;)</span>
+          </article>
+          <div class="arrow" aria-label="renders">→</div>
+          <article class="result-card">
+            <span class="tag tag-result">Browser output</span>
+            <h3>Rendered webpage</h3>
+            <p>React creates the page’s DOM under <code>#root</code>. The browser displays that DOM as the final interface.</p>
+            <span class="code-line">#root → React-managed DOM</span>
+          </article>
+        </div>
+        <p class="flow-caption">The browser parses the HTML, loads the module, and React renders the component tree into the root.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="tree-title">
+      <div class="section-heading">
+        <span class="number">03</span>
+        <h2>How the component tree comes together</h2>
+      </div>
+      <div class="diagram-shell component-layout">
+        <div class="root-box">
+          <h3>HTML mount point</h3>
+          <p><code>frontend/index.html</code> contains the root container:</p>
+          <span class="code-line">&lt;div id="root"&gt;&lt;/div&gt;</span>
+          <p style="margin-top:12px">It starts empty. React uses this element as the target for rendering.</p>
+        </div>
+        <div class="tree" aria-label="Illustrative React component hierarchy">
+          <div class="node">
+            <strong>App.jsx — top-level component</strong>
+            <small>Composes the page and coordinates its state and behavior</small>
+          </div>
+          <div class="tree-down" aria-hidden="true">↓</div>
+          <div class="children">
+            <div class="node">
+              <strong>StudentForm.jsx</strong>
+              <small>Inputs and submit action</small>
+            </div>
+            <div class="node">
+              <strong>StudentList.jsx</strong>
+              <small>Displays the collection of students</small>
+            </div>
+            <div class="node">
+              <strong>StudentItem.jsx</strong>
+              <small>One student row, with edit/delete actions</small>
+            </div>
+          </div>
+          <p class="note">Example structure for teaching component composition. In this project right now, the form and list are written directly inside <code>App.jsx</code>; they could later be extracted into separate component files.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="roles-title">
+      <div class="section-heading">
+        <span class="number">04</span>
+        <h2>What each file is responsible for</h2>
+      </div>
+      <div class="detail-grid">
+        <article class="detail">
+          <h3><code>index.html</code> — the host page</h3>
+          <p>Provides the real HTML document and the <code>#root</code> element. It also loads <code>/src/main.jsx</code> as a JavaScript module.</p>
+        </article>
+        <article class="detail">
+          <h3><code>main.jsx</code> — the bootstrap</h3>
+          <p>Finds the root element, creates a React root, and tells React to render <code>&lt;App /&gt;</code>. It is the app’s JavaScript entry point.</p>
+        </article>
+        <article class="detail">
+          <h3><code>App.jsx</code> — the composition root</h3>
+          <p>Imports and arranges the page’s components. It can hold shared state and pass data and event handlers to child components through props.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="code-title">
+      <div class="section-heading">
+        <span class="number">05</span>
+        <h2>See the connection in code</h2>
+      </div>
+      <div class="code-flow">
+        <article class="code-card">
+          <div class="code-title">frontend/index.html</div>
+          <pre><code>&lt;body&gt;
+  <span class="token-comment">&lt;!-- React mounts into this element --&gt;</span>
+  &lt;div id="root"&gt;&lt;/div&gt;
+  &lt;script type="module"
+    src="/src/main.jsx"&gt;&lt;/script&gt;
+&lt;/body&gt;</code></pre>
+        </article>
+        <article class="code-card">
+          <div class="code-title">frontend/src/main.jsx</div>
+          <pre><code><span class="token-key">import</span> { createRoot } <span class="token-key">from</span> <span class="token-string">'react-dom/client'</span>;
+<span class="token-key">import</span> App <span class="token-key">from</span> <span class="token-string">'./App.jsx'</span>;
+
+<span class="token-key">const</span> rootElement = document
+  .<span class="token-fn">getElementById</span>(<span class="token-string">'root'</span>);
+
+<span class="token-fn">createRoot</span>(rootElement).<span class="token-fn">render</span>(
+  &lt;App /&gt;
+);</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="communication-title">
+      <div class="section-heading">
+        <span class="number">06</span>
+        <h2>How components communicate</h2>
+      </div>
+      <div class="sequence">
+        <article class="sequence-step">
+          <strong>Parent imports child</strong>
+          <span><code>App.jsx</code> imports child component files and places them in its JSX.</span>
+        </article>
+        <article class="sequence-step">
+          <strong>Parent passes props</strong>
+          <span>Data and callback functions flow down to child components as props.</span>
+        </article>
+        <article class="sequence-step">
+          <strong>User interacts</strong>
+          <span>A child calls a callback prop when a user types, submits, edits, or deletes.</span>
+        </article>
+        <article class="sequence-step">
+          <strong>State updates, UI rerenders</strong>
+          <span>The state-owning component updates state; React reconciles and updates the affected DOM.</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="final-title">
+      <div class="section-heading">
+        <span class="number">07</span>
+        <h2>The complete picture</h2>
+      </div>
+      <div class="diagram-shell">
+        <div class="flow">
+          <article class="file-card">
+            <span class="tag tag-html">1 · HTML</span>
+            <h3>Creates <code>#root</code></h3>
+            <p>The browser opens the page and provides the mount element.</p>
+          </article>
+          <div class="arrow" aria-hidden="true">→</div>
+          <article class="file-card">
+            <span class="tag tag-entry">2 · Entry</span>
+            <h3><code>main.jsx</code> starts React</h3>
+            <p>It locates the root and asks React to render <code>&lt;App /&gt;</code>.</p>
+          </article>
+          <div class="arrow" aria-hidden="true">→</div>
+          <article class="result-card">
+            <span class="tag tag-app">3 · Components</span>
+            <h3>App tree becomes the UI</h3>
+            <p>React renders <code>App</code> and its descendants into <code>#root</code>, producing what the user sees.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="closing">
+      Think of <strong><code>main.jsx</code> as the starter</strong>,
+      <strong><code>App.jsx</code> as the page composer</strong>, and
+      <strong><code>#root</code> as the destination</strong> where React-managed DOM appears.
+      Components form a tree—not a literal pasted or flattened “mega component.”
+    </footer>
+  </main>
+</body>
+</html>
